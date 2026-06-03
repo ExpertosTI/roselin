@@ -7,6 +7,20 @@ let products = {};
 let orders = [];
 let settings = { whatsapp: '18295551212', shopName: 'The Roseline Effect' };
 
+// Security Sanitization Helper
+function escapeHTML(str) {
+  if (!str) return '';
+  return String(str).replace(/[&<>'"]/g, 
+    tag => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      "'": '&#39;',
+      '"': '&quot;'
+    }[tag] || tag)
+  );
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   initTabs();
   loadData();
@@ -26,9 +40,9 @@ function loadData() {
   } else {
     // Seeding products automatically if admin opens first
     products = {
-      1: { id: 1, name: 'Sérum Capilar', price: 1000, subtitle: 'Fortalece • Estimula • Protege', img: 'images/serum_capilar.png', desc: 'Un elixir nutritivo que repara la fibra capilar, aporta un brillo de espejo y promueve un crecimiento saludable de raíz a puntas.', badge: 'Best Seller' },
-      2: { id: 2, name: 'Perfume Capilar', price: 1200, subtitle: 'Fragancia Sublime • Brillo Ligero', img: 'images/perfume_capilar.png', desc: 'Aroma sofisticado que neutraliza olores del ambiente, aportando hidratación ligera y una estela olfativa deslumbrante de larga duración.', badge: '' },
-      3: { id: 3, name: 'Elixir de Feromonas', price: 1500, subtitle: 'Magnetismo • Confianza • Atracción', img: 'images/elixir_feromonas.png', desc: 'El secreto del magnetismo personal. Incrementa la confianza natural y potencia el atractivo personal a través de la química sensorial.', badge: 'Exclusivo' }
+      1: { id: 1, name: 'Sérum Capilar', price: 1000, subtitle: 'Fortalece • Estimula • Protege', img: 'images/serum_capilar.png', desc: 'Elixir de restauración profunda y nutrición folicular. Sella la cutícula al instante para un acabado con brillo de espejo, estimulando el crecimiento y protegiendo contra el daño térmico.', badge: 'Best Seller' },
+      2: { id: 2, name: 'Perfume Capilar', price: 1200, subtitle: 'Fragancia Sublime • Brillo Ligero', img: 'images/perfume_capilar.png', desc: 'Bruma aromática de alta costura diseñada para envolver el cabello en notas olfativas exquisitas de larga duración. Suaviza la fibra capilar, elimina olores ambientales y aporta un destello sutil y ligero.', badge: '' },
+      3: { id: 3, name: 'Elixir de Feromonas', price: 1500, subtitle: 'Magnetismo • Confianza • Atracción', img: 'images/elixir_feromonas.png', desc: 'Concentrado magnético formulado para elevar la presencia y el atractivo natural. Trabaja mediante la estimulación química sensorial, proyectando una estela de seguridad y elegancia memorable.', badge: 'Exclusivo' }
     };
     localStorage.setItem('roseline_products', JSON.stringify(products));
   }
@@ -269,24 +283,24 @@ function renderOrders() {
       day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit'
     });
 
-    const itemsStr = ord.items.map(item => `${item.qty}x ${item.name}`).join('<br>');
+    const itemsStr = ord.items.map(item => `${item.qty}x ${escapeHTML(item.name)}`).join('<br>');
     const statusClass = ord.status.toLowerCase();
 
     html += `
       <tr>
-        <td><strong>#${ord.id}</strong></td>
+        <td><strong>#${escapeHTML(ord.id)}</strong></td>
         <td>
-          <div style="font-weight: 600;">${ord.clientName}</div>
-          <div style="font-size: 11px; color: var(--grey);">${ord.address}</div>
+          <div style="font-weight: 600;">${escapeHTML(ord.clientName)}</div>
+          <div style="font-size: 11px; color: var(--grey);">${escapeHTML(ord.address)}</div>
         </td>
         <td style="color: var(--grey); font-size: 12px;">${dateStr}</td>
         <td style="font-size: 13px;">${itemsStr}</td>
         <td><strong>RD$ ${ord.total.toLocaleString()}</strong></td>
         <td>
-          <span class="status-badge ${statusClass}">${ord.status}</span>
+          <span class="status-badge ${statusClass}">${escapeHTML(ord.status)}</span>
         </td>
         <td>
-          <select class="btn btn-secondary btn-sm" style="padding: 6px 12px; font-size: 12px; background: var(--black-alt);" onchange="updateOrderStatus('${ord.id}', this.value)">
+          <select class="btn btn-secondary btn-sm" style="padding: 6px 12px; font-size: 12px; background: var(--black-alt);" onchange="updateOrderStatus('${escapeHTML(ord.id)}', this.value)">
             <option value="Pendiente" ${ord.status === 'Pendiente' ? 'selected' : ''}>Pendiente</option>
             <option value="Completado" ${ord.status === 'Completado' ? 'selected' : ''}>Completado</option>
             <option value="Cancelado" ${ord.status === 'Cancelado' ? 'selected' : ''}>Cancelado</option>
@@ -333,14 +347,14 @@ function renderProducts() {
     html += `
       <div class="admin-prod-card glass-container" id="admin-prod-${prod.id}">
         <div class="admin-prod-header">
-          <img class="admin-prod-thumbnail" src="${prod.img || 'images/placeholder.png'}" alt="${prod.name}">
+          <img class="admin-prod-thumbnail" src="${escapeHTML(prod.img) || 'images/placeholder.png'}" alt="${escapeHTML(prod.name)}">
           <div class="admin-prod-title-meta">
-            <h4>${prod.name}</h4>
+            <h4>${escapeHTML(prod.name)}</h4>
             <span>RD$ ${Number(prod.price).toLocaleString()} • ${visibilityText}</span>
           </div>
         </div>
         <div class="admin-prod-body">
-          <p>${prod.desc}</p>
+          <p>${escapeHTML(prod.desc)}</p>
         </div>
         <div class="admin-prod-actions">
           <button class="btn btn-secondary btn-sm" style="flex-grow: 1;" onclick="openEditProductModal(${prod.id})">Editar</button>

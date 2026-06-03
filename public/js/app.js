@@ -10,7 +10,7 @@ const DEFAULT_PRODUCTS = {
     price: 1000,
     subtitle: 'Fortalece • Estimula • Protege',
     img: 'images/serum_capilar.png',
-    desc: 'Un elixir nutritivo que repara la fibra capilar, aporta un brillo de espejo y promueve un crecimiento saludable de raíz a puntas.',
+    desc: 'Elixir de restauración profunda y nutrición folicular. Sella la cutícula al instante para un acabado con brillo de espejo, estimulando el crecimiento y protegiendo contra el daño térmico.',
     badge: 'Best Seller'
   },
   2: {
@@ -19,7 +19,7 @@ const DEFAULT_PRODUCTS = {
     price: 1200,
     subtitle: 'Fragancia Sublime • Brillo Ligero',
     img: 'images/perfume_capilar.png',
-    desc: 'Aroma sofisticado que neutraliza olores del ambiente, aportando hidratación ligera y una estela olfativa deslumbrante de larga duración.',
+    desc: 'Bruma aromática de alta costura diseñada para envolver el cabello en notas olfativas exquisitas de larga duración. Suaviza la fibra capilar, elimina olores ambientales y aporta un destello sutil y ligero.',
     badge: ''
   },
   3: {
@@ -28,7 +28,7 @@ const DEFAULT_PRODUCTS = {
     price: 1500,
     subtitle: 'Magnetismo • Confianza • Atracción',
     img: 'images/elixir_feromonas.png',
-    desc: 'El secreto del magnetismo personal. Incrementa la confianza natural y potencia el atractivo personal a través de la química sensorial.',
+    desc: 'Concentrado magnético formulado para elevar la presencia y el atractivo natural. Trabaja mediante la estimulación química sensorial, proyectando una estela de seguridad y elegancia memorable.',
     badge: 'Exclusivo'
   }
 };
@@ -36,6 +36,20 @@ const DEFAULT_PRODUCTS = {
 // Global Store State
 let products = {};
 let cart = [];
+
+// Security Sanitization Helper
+function escapeHTML(str) {
+  if (!str) return '';
+  return String(str).replace(/[&<>'"]/g, 
+    tag => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      "'": '&#39;',
+      '"': '&quot;'
+    }[tag] || tag)
+  );
+}
 
 // Initialize application on DOM ready
 document.addEventListener('DOMContentLoaded', () => {
@@ -92,18 +106,18 @@ function renderCatalog() {
   Object.values(products).forEach(prod => {
     if (prod.hidden) return; // Allow hiding products from admin panel
 
-    const badgeHtml = prod.badge ? `<div class="product-badge">${prod.badge}</div>` : '';
+    const badgeHtml = prod.badge ? `<div class="product-badge">${escapeHTML(prod.badge)}</div>` : '';
     
     html += `
       <article class="product-card reveal" data-product-id="${prod.id}">
         <div class="product-image-container">
-          <img src="${prod.img || 'images/placeholder.png'}" alt="${prod.name}" class="product-image" loading="lazy">
+          <img src="${escapeHTML(prod.img) || 'images/placeholder.png'}" alt="${escapeHTML(prod.name)}" class="product-image" loading="lazy">
           ${badgeHtml}
         </div>
         <div class="product-info">
-          <h3 class="product-title">${prod.name}</h3>
-          <span class="product-subtitle">${prod.subtitle}</span>
-          <p class="product-desc">${prod.desc}</p>
+          <h3 class="product-title">${escapeHTML(prod.name)}</h3>
+          <span class="product-subtitle">${escapeHTML(prod.subtitle)}</span>
+          <p class="product-desc">${escapeHTML(prod.desc)}</p>
           <div class="product-meta">
             <span class="product-price">RD$ ${Number(prod.price).toLocaleString()}</span>
             <button class="btn btn-add-cart" onclick="addToCart(${prod.id})">Agregar</button>
@@ -306,9 +320,9 @@ function updateCartUI() {
 
     html += `
       <div class="cart-item">
-        <img class="cart-item-img" src="${details.img || 'images/placeholder.png'}" alt="${details.name}">
+        <img class="cart-item-img" src="${escapeHTML(details.img) || 'images/placeholder.png'}" alt="${escapeHTML(details.name)}">
         <div class="cart-item-info">
-          <h4>${details.name}</h4>
+          <h4>${escapeHTML(details.name)}</h4>
           <span class="cart-item-price">RD$ ${Number(details.price).toLocaleString()}</span>
           <div class="cart-item-controls">
             <button class="cart-qty-btn" onclick="updateQty(${item.id}, -1)">-</button>
@@ -352,8 +366,8 @@ function initCheckout() {
   form.addEventListener('submit', (e) => {
     e.preventDefault();
 
-    const name = document.getElementById('checkout-name').value.trim();
-    const address = document.getElementById('checkout-address').value.trim();
+    const name = escapeHTML(document.getElementById('checkout-name').value.trim());
+    const address = escapeHTML(document.getElementById('checkout-address').value.trim());
     const deliverySelect = document.getElementById('checkout-delivery');
     const deliveryText = deliverySelect.options[deliverySelect.selectedIndex].text;
     const deliveryVal = deliverySelect.value;
