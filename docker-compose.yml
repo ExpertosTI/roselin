@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  app:
+    image: roseline-app:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      PORT: 3000
+      NODE_ENV: production
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:3000/api/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    networks:
+      - RenaceNet
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.roseline-http.rule=Host(`theroselineeffect.shop`) || Host(`www.theroselineeffect.shop`)"
+        - "traefik.http.routers.roseline-http.entrypoints=web"
+        - "traefik.http.routers.roseline-http.middlewares=roseline-redirect-https"
+        - "traefik.http.routers.roseline-https.rule=Host(`theroselineeffect.shop`) || Host(`www.theroselineeffect.shop`)"
+        - "traefik.http.routers.roseline-https.entrypoints=websecure"
+        - "traefik.http.routers.roseline-https.tls=true"
+        - "traefik.http.routers.roseline-https.tls.certresolver=letsencryptresolver"
+        - "traefik.http.middlewares.roseline-redirect-https.redirectscheme.scheme=https"
+        - "traefik.http.services.roseline-svc.loadbalancer.server.port=3000"
+        - "traefik.docker.network=RenaceNet"
+
+networks:
+  RenaceNet:
+    external: true
