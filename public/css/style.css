@@ -970,58 +970,163 @@ section {
    FOOTER SECTION
 ───────────────────────────────────────────────────────────── */
 
-footer {
-  background: #050506;
-  border-top: 1px solid rgba(255,255,255,0.05);
-  padding: 80px 0 40px;
+.modern-footer {
+  background-color: #060607;
+  border-top: 1px solid rgba(197, 168, 128, 0.1);
+  padding: 96px 0 48px;
+  position: relative;
+  overflow: hidden;
 }
 
-.footer-inner {
+.modern-footer::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 10%; right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(197, 168, 128, 0.3) 50%, transparent);
+}
+
+.footer-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 32px;
+  gap: 48px;
+  margin-bottom: 64px;
 }
 
-.footer-brand h3 {
-  font-family: var(--font-serif);
-  font-size: 24px;
+.footer-col {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.footer-col h4 {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--gold);
   margin-bottom: 8px;
-  letter-spacing: 0.05em;
 }
 
-.footer-brand p {
+/* Brand Column */
+.footer-logo-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.footer-logo-icon {
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  object-position: center 25%;
+  border-radius: 50%;
+  border: 1px solid rgba(197, 168, 128, 0.3);
+  background: var(--black-alt);
+}
+
+.footer-brand-title {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  letter-spacing: 0.05em;
+  color: var(--white);
+}
+
+.footer-slogan {
   color: var(--grey);
   font-family: var(--font-serif);
   font-style: italic;
   font-size: 15px;
+  line-height: 1.5;
+  margin: 0;
+  max-width: 320px;
 }
 
-.footer-links {
+.footer-social-icons {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.social-icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--grey);
+  transition: all var(--transition);
+}
+
+.social-icon-btn:hover {
+  background: var(--gold-dim);
+  border-color: var(--gold);
+  color: var(--white);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 15px rgba(197, 168, 128, 0.2);
+}
+
+/* Links & Contact Columns */
+.footer-links-grid {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  align-items: flex-start;
 }
 
-.footer-links a {
-  font-size: 13px;
+.footer-link-modern {
+  font-size: 14px;
+  color: var(--grey);
+  transition: color var(--transition), transform var(--transition);
+  display: inline-block;
+}
+
+.footer-link-modern:hover {
+  color: var(--white);
+  transform: translateX(4px);
+}
+
+.footer-contact-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.footer-contact-list li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  color: var(--grey);
+}
+
+.footer-contact-list a {
   color: var(--grey);
   transition: color var(--transition);
 }
 
-.footer-links a:hover {
-  color: var(--gold);
+.footer-contact-list a:hover {
+  color: var(--white);
 }
 
-.footer-bottom {
-  grid-column: 1 / -1;
-  border-top: 1px solid rgba(255,255,255,0.05);
-  padding-top: 24px;
-  margin-top: 24px;
+.contact-icon {
+  font-size: 16px;
+  opacity: 0.8;
+}
+
+/* Footer Bottom */
+.footer-bottom-modern {
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 32px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  font-size: 11px;
+  gap: 16px;
+  align-items: center;
+  text-align: center;
+  font-size: 12px;
   color: var(--grey);
 }
 
@@ -1120,21 +1225,6 @@ footer {
     padding: 24px;
   }
 
-  .footer-inner {
-    grid-template-columns: 2fr 1fr;
-    gap: 48px;
-  }
-
-  .footer-links {
-    align-items: flex-end;
-  }
-
-  .footer-bottom {
-    flex-direction: row;
-    justify-content: space-between;
-    padding-top: 32px;
-    margin-top: 32px;
-  }
 }
 
 @media (min-width: 1024px) {
