@@ -54,7 +54,11 @@ function escapeHTML(str) {
 
 function initSecretAdminAccess() {
   const logo = document.getElementById('logo-link');
-  if (!logo) return;
+  const overlay = document.getElementById('admin-auth-overlay');
+  if (!logo || !overlay) return;
+
+  const errorMsg = document.getElementById('auth-error');
+  const digits = overlay.querySelectorAll('.pin-digit');
 
   let lastClickTime = 0;
 
@@ -64,15 +68,71 @@ function initSecretAdminAccess() {
 
     if (timeDiff < 300) {
       e.preventDefault();
-      const pin = prompt('Introduce el PIN de administración:');
-      if (pin === '7479') {
-        sessionStorage.setItem('roseline_admin_auth', 'true');
-        window.location.href = 'admin.html';
-      } else if (pin !== null) {
-        alert('PIN incorrecto.');
-      }
+      errorMsg.style.display = 'none';
+      digits.forEach((input, index) => {
+        input.value = '';
+        if (index > 0) input.setAttribute('disabled', 'true');
+        else input.removeAttribute('disabled');
+      });
+      overlay.style.display = 'flex';
+      setTimeout(() => {
+        overlay.style.opacity = '1';
+        digits[0].focus();
+      }, 50);
     }
     lastClickTime = currentTime;
+  });
+
+  // Close overlay on click outside auth-card
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) {
+      overlay.style.opacity = '0';
+      setTimeout(() => {
+        overlay.style.display = 'none';
+      }, 300);
+    }
+  });
+
+  // Handle digit inputs
+  digits.forEach((input, index) => {
+    input.addEventListener('input', (e) => {
+      const val = e.target.value;
+      if (val.length > 1) {
+        e.target.value = val.slice(-1);
+      }
+
+      if (e.target.value && index < digits.length - 1) {
+        digits[index + 1].removeAttribute('disabled');
+        digits[index + 1].focus();
+      }
+
+      // Check PIN
+      const pin = Array.from(digits).map(i => i.value).join('');
+      if (pin.length === digits.length) {
+        if (pin === '7479') {
+          sessionStorage.setItem('roseline_admin_auth', 'true');
+          overlay.style.opacity = '0';
+          setTimeout(() => {
+            overlay.style.display = 'none';
+            window.location.href = 'panel-secreto-7479.html';
+          }, 300);
+        } else {
+          errorMsg.style.display = 'block';
+          digits.forEach((i, idx) => {
+            i.value = '';
+            if (idx > 0) i.setAttribute('disabled', 'true');
+          });
+          digits[0].focus();
+        }
+      }
+    });
+
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace' && !input.value && index > 0) {
+        digits[index - 1].focus();
+        digits[index].setAttribute('disabled', 'true');
+      }
+    });
   });
 }
 
@@ -471,7 +531,7 @@ function initCheckout() {
     message += `💰 *TOTAL A PAGAR: RD$ ${total.toLocaleString()}*\n\n`;
     message += `⚡ _"no solo es un cambio, es el efecto de roseline"_`;
 
-    // Save order details to localStorage for admin.html history
+    // Save order details to localStorage for panel-secreto-7479.html history
     const savedOrders = localStorage.getItem('roseline_orders');
     let ordersList = [];
     if (savedOrders) {

@@ -31,7 +31,10 @@ function initAuth() {
 
   if (!overlay) return;
 
-  if (sessionStorage.getItem('roseline_admin_auth') === 'true') {
+  if (sessionStorage.getItem('roseline_admin_auth') !== 'true') {
+    window.location.replace('index.html');
+    return;
+  } else {
     overlay.style.display = 'none';
     return;
   }

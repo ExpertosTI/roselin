@@ -18,6 +18,27 @@
 </head>
 <body>
 
+  <!-- Auth PIN Overlay (Secret Access) -->
+  <div id="admin-auth-overlay" class="auth-overlay" style="display: none; opacity: 0;">
+    <div class="auth-card glass-container">
+      <div class="auth-logo">
+        <img class="logo-icon" src="images/logo.png" alt="The Roseline Effect Logo">
+      </div>
+      <h2>Acceso Restringido</h2>
+      <p>Introduce el PIN de seguridad de 4 dígitos para acceder al panel de administración.</p>
+      
+      <form id="auth-form" class="auth-form">
+        <div class="pin-inputs">
+          <input type="password" maxlength="1" class="pin-digit" required pattern="[0-9]" inputmode="numeric">
+          <input type="password" maxlength="1" class="pin-digit" required pattern="[0-9]" inputmode="numeric" disabled>
+          <input type="password" maxlength="1" class="pin-digit" required pattern="[0-9]" inputmode="numeric" disabled>
+          <input type="password" maxlength="1" class="pin-digit" required pattern="[0-9]" inputmode="numeric" disabled>
+        </div>
+        <p id="auth-error" class="auth-error-msg" style="display: none;">PIN incorrecto. Inténtalo de nuevo.</p>
+      </form>
+    </div>
+  </div>
+
   <!-- Brand Cinematic Intro Overlay -->
   <div id="brand-intro" class="brand-intro">
     <div class="intro-content">
@@ -295,33 +316,36 @@
         </div>
       </div>
 
-      <!-- Col 2: Navigation -->
-      <div class="footer-col links-col">
-        <h4>Explorar</h4>
-        <div class="footer-links-grid">
-          <a href="#experiencia" class="footer-link-modern">Sobre Nosotros</a>
-          <a href="#catalogo" class="footer-link-modern">Colección</a>
-          <a href="#filosofia" class="footer-link-modern">Identidad</a>
+      <!-- Columns wrapper for mobile layout compaction -->
+      <div class="footer-content-cols">
+        <!-- Col 2: Navigation -->
+        <div class="footer-col links-col">
+          <h4>Explorar</h4>
+          <div class="footer-links-grid">
+            <a href="#experiencia" class="footer-link-modern">Sobre Nosotros</a>
+            <a href="#catalogo" class="footer-link-modern">Colección</a>
+            <a href="#filosofia" class="footer-link-modern">Identidad</a>
+          </div>
         </div>
-      </div>
 
-      <!-- Col 3: Info & Contact -->
-      <div class="footer-col contact-col">
-        <h4>Contacto</h4>
-        <ul class="footer-contact-list">
-          <li>
-            <span class="contact-icon">📱</span>
-            <a href="https://wa.me/18499187479" target="_blank" rel="noopener">+1 (849) 918-7479</a>
-          </li>
-          <li>
-            <span class="contact-icon">📸</span>
-            <a href="https://instagram.com/The_roseline_effect" target="_blank" rel="noopener">@The_roseline_effect</a>
-          </li>
-          <li>
-            <span class="contact-icon">📍</span>
-            <span>Santo Domingo, R.D.</span>
-          </li>
-        </ul>
+        <!-- Col 3: Info & Contact -->
+        <div class="footer-col contact-col">
+          <h4>Contacto</h4>
+          <ul class="footer-contact-list">
+            <li>
+              <span class="contact-icon">📱</span>
+              <a href="https://wa.me/18499187479" target="_blank" rel="noopener">+1 (849) 918-7479</a>
+            </li>
+            <li>
+              <span class="contact-icon">📸</span>
+              <a href="https://instagram.com/The_roseline_effect" target="_blank" rel="noopener">@The_roseline_effect</a>
+            </li>
+            <li>
+              <span class="contact-icon">📍</span>
+              <span>Santo Domingo, R.D.</span>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
 
