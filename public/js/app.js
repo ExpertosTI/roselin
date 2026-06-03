@@ -56,15 +56,23 @@ function initSecretAdminAccess() {
   const logo = document.getElementById('logo-link');
   if (!logo) return;
 
-  logo.addEventListener('dblclick', (e) => {
-    e.preventDefault();
-    const pin = prompt('Introduce el PIN de administración:');
-    if (pin === '7479') {
-      sessionStorage.setItem('roseline_admin_auth', 'true');
-      window.location.href = 'admin.html';
-    } else if (pin !== null) {
-      alert('PIN incorrecto.');
+  let lastClickTime = 0;
+
+  logo.addEventListener('click', (e) => {
+    const currentTime = new Date().getTime();
+    const timeDiff = currentTime - lastClickTime;
+
+    if (timeDiff < 300) {
+      e.preventDefault();
+      const pin = prompt('Introduce el PIN de administración:');
+      if (pin === '7479') {
+        sessionStorage.setItem('roseline_admin_auth', 'true');
+        window.location.href = 'admin.html';
+      } else if (pin !== null) {
+        alert('PIN incorrecto.');
+      }
     }
+    lastClickTime = currentTime;
   });
 }
 
