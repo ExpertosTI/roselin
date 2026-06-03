@@ -21,7 +21,71 @@ function escapeHTML(str) {
   );
 }
 
+// Auth PIN logic
+const CORRECT_PIN = '7479'; // Last 4 digits of 849-918-7479
+
+function initAuth() {
+  const overlay = document.getElementById('admin-auth-overlay');
+  const errorMsg = document.getElementById('auth-error');
+  const digits = document.querySelectorAll('.pin-digit');
+
+  if (!overlay) return;
+
+  if (sessionStorage.getItem('roseline_admin_auth') === 'true') {
+    overlay.style.display = 'none';
+    return;
+  }
+
+  // Handle focus behavior on digits typing
+  digits.forEach((input, index) => {
+    // Focus first input automatically
+    if (index === 0) input.focus();
+
+    input.addEventListener('input', (e) => {
+      const val = e.target.value;
+      
+      // Keep only last character typed
+      if (val.length > 1) {
+        e.target.value = val.slice(-1);
+      }
+
+      if (e.target.value && index < digits.length - 1) {
+        digits[index + 1].removeAttribute('disabled');
+        digits[index + 1].focus();
+      }
+
+      // Check if PIN is fully entered
+      const pin = Array.from(digits).map(i => i.value).join('');
+      if (pin.length === digits.length) {
+        if (pin === CORRECT_PIN) {
+          sessionStorage.setItem('roseline_admin_auth', 'true');
+          overlay.style.opacity = '0';
+          setTimeout(() => {
+            overlay.style.display = 'none';
+          }, 300);
+        } else {
+          // Failure
+          errorMsg.style.display = 'block';
+          digits.forEach((i, idx) => {
+            i.value = '';
+            if (idx > 0) i.setAttribute('disabled', 'true');
+          });
+          digits[0].focus();
+        }
+      }
+    });
+
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace' && !input.value && index > 0) {
+        digits[index - 1].focus();
+        digits[index].setAttribute('disabled', 'true');
+      }
+    });
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+  initAuth();
   initTabs();
   loadData();
   initSpotlight();

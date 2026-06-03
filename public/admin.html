@@ -16,6 +16,27 @@
 </head>
 <body class="admin-body">
 
+  <!-- Auth PIN Overlay -->
+  <div id="admin-auth-overlay" class="auth-overlay">
+    <div class="auth-card glass-container">
+      <div class="auth-logo">
+        <img class="logo-icon" src="images/logo.png" alt="The Roseline Effect Logo">
+      </div>
+      <h2>Acceso Restringido</h2>
+      <p>Introduce el PIN de seguridad de 4 dígitos para acceder al panel de administración.</p>
+      
+      <form id="auth-form" class="auth-form">
+        <div class="pin-inputs">
+          <input type="password" maxlength="1" class="pin-digit" required pattern="[0-9]" inputmode="numeric">
+          <input type="password" maxlength="1" class="pin-digit" required pattern="[0-9]" inputmode="numeric" disabled>
+          <input type="password" maxlength="1" class="pin-digit" required pattern="[0-9]" inputmode="numeric" disabled>
+          <input type="password" maxlength="1" class="pin-digit" required pattern="[0-9]" inputmode="numeric" disabled>
+        </div>
+        <p id="auth-error" class="auth-error-msg" style="display: none;">PIN incorrecto. Inténtalo de nuevo.</p>
+      </form>
+    </div>
+  </div>
+
   <div class="radial-spotlight" id="spotlight"></div>
 
   <!-- Admin Panel Container -->
