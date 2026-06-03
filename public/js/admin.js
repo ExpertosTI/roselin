@@ -5,7 +5,7 @@
 // Data stores
 let products = {};
 let orders = [];
-let settings = { whatsapp: '14012302853', shopName: 'The Roseline Effect' };
+let settings = { whatsapp: '18499187479', shopName: 'The Roseline Effect' };
 
 // Security Sanitization Helper
 function escapeHTML(str) {

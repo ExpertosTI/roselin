@@ -1,7 +1,7 @@
 /* ─────────────────────────────────────────────────────────────
    THE ROSELINE EFFECT — FRONTIER CONTROLLER (DYNAMIC VER.)
 ───────────────────────────────────────────────────────────── */
-const VENDOR_WHATSAPP = '14012302853';
+const VENDOR_WHATSAPP = '18499187479';
 
 // Default Products Mapping (seeded if not present in localStorage)
 const DEFAULT_PRODUCTS = {
