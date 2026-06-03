@@ -7,11 +7,11 @@ const VENDOR_WHATSAPP = '14012302853';
 const DEFAULT_PRODUCTS = {
   1: {
     id: 1,
-    name: 'Sérum Capilar',
+    name: 'Sérum Capilar (Hair Serum)',
     price: 1000,
     subtitle: 'Fortalece • Estimula • Protege',
     img: 'images/serum_capilar.png',
-    desc: 'Elixir de restauración profunda y nutrición folicular. Sella la cutícula al instante para un acabado con brillo de espejo, estimulando el crecimiento y protegiendo contra el daño térmico.',
+    desc: 'Nuestro sérum capilar está diseñado para nutrir, fortalecer e hidratar tu cabello desde la raíz hasta las puntas. Ayuda a reducir el quiebre, aporta brillo, suavidad y controla el frizz, favoreciendo un crecimiento más saludable. Además, protege tu cabello de los daños causados por el calor y factores externos.',
     badge: 'Best Seller'
   },
   2: {
@@ -92,6 +92,12 @@ function initProducts() {
   } else {
     try {
       products = JSON.parse(localProducts);
+      // Migrate product 1 if it has the old description
+      if (products[1] && (products[1].desc.includes('Elixir de restauración profunda') || !products[1].desc.includes('Nuestro sérum capilar está diseñado'))) {
+        products[1].name = DEFAULT_PRODUCTS[1].name;
+        products[1].desc = DEFAULT_PRODUCTS[1].desc;
+        localStorage.setItem('roseline_products', JSON.stringify(products));
+      }
     } catch (e) {
       products = { ...DEFAULT_PRODUCTS };
     }

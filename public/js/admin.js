@@ -36,11 +36,19 @@ function loadData() {
   // Load products (seed defaults if empty)
   const localProducts = localStorage.getItem('roseline_products');
   if (localProducts) {
-    try { products = JSON.parse(localProducts); } catch(e) {}
+    try {
+      products = JSON.parse(localProducts);
+      // Migrate product 1 if it has the old description
+      if (products[1] && (products[1].desc.includes('Elixir de restauración profunda') || !products[1].desc.includes('Nuestro sérum capilar está diseñado'))) {
+        products[1].name = 'Sérum Capilar (Hair Serum)';
+        products[1].desc = 'Nuestro sérum capilar está diseñado para nutrir, fortalecer e hidratar tu cabello desde la raíz hasta las puntas. Ayuda a reducir el quiebre, aporta brillo, suavidad y controla el frizz, favoreciendo un crecimiento más saludable. Además, protege tu cabello de los daños causados por el calor y factores externos.';
+        localStorage.setItem('roseline_products', JSON.stringify(products));
+      }
+    } catch(e) {}
   } else {
     // Seeding products automatically if admin opens first
     products = {
-      1: { id: 1, name: 'Sérum Capilar', price: 1000, subtitle: 'Fortalece • Estimula • Protege', img: 'images/serum_capilar.png', desc: 'Elixir de restauración profunda y nutrición folicular. Sella la cutícula al instante para un acabado con brillo de espejo, estimulando el crecimiento y protegiendo contra el daño térmico.', badge: 'Best Seller' },
+      1: { id: 1, name: 'Sérum Capilar (Hair Serum)', price: 1000, subtitle: 'Fortalece • Estimula • Protege', img: 'images/serum_capilar.png', desc: 'Nuestro sérum capilar está diseñado para nutrir, fortalecer e hidratar tu cabello desde la raíz hasta las puntas. Ayuda a reducir el quiebre, aporta brillo, suavidad y controla el frizz, favoreciendo un crecimiento más saludable. Además, protege tu cabello de los daños causados por el calor y factores externos.', badge: 'Best Seller' },
       2: { id: 2, name: 'Perfume Capilar', price: 1200, subtitle: 'Fragancia Sublime • Brillo Ligero', img: 'images/perfume_capilar.png', desc: 'Bruma aromática de alta costura diseñada para envolver el cabello en notas olfativas exquisitas de larga duración. Suaviza la fibra capilar, elimina olores ambientales y aporta un destello sutil y ligero.', badge: '' },
       3: { id: 3, name: 'Elixir de Feromonas', price: 1500, subtitle: 'Magnetismo • Confianza • Atracción', img: 'images/elixir_feromonas.png', desc: 'Concentrado magnético formulado para elevar la presencia y el atractivo natural. Trabaja mediante la estimulación química sensorial, proyectando una estela de seguridad y elegancia memorable.', badge: 'Exclusivo' }
     };
@@ -54,9 +62,9 @@ function loadData() {
   } else {
     // Seeding mock orders for illustration
     orders = [
-      { id: 'RSL-39281', clientName: 'Maria Rodriguez', address: 'Piantini, Santo Domingo', deliveryType: 'delivery_sd', items: [{ id: 1, name: 'Sérum Capilar', price: 1000, qty: 2, subtotal: 2000 }], total: 2000, status: 'Completado', timestamp: new Date(Date.now() - 3600000 * 2).toISOString() },
+      { id: 'RSL-39281', clientName: 'Maria Rodriguez', address: 'Piantini, Santo Domingo', deliveryType: 'delivery_sd', items: [{ id: 1, name: 'Sérum Capilar (Hair Serum)', price: 1000, qty: 2, subtotal: 2000 }], total: 2000, status: 'Completado', timestamp: new Date(Date.now() - 3600000 * 2).toISOString() },
       { id: 'RSL-19284', clientName: 'Laura Sanchez', address: 'Bella Vista, Santo Domingo', deliveryType: 'delivery_sd', items: [{ id: 3, name: 'Elixir de Feromonas', price: 1500, qty: 1, subtotal: 1500 }], total: 1500, status: 'Pendiente', timestamp: new Date(Date.now() - 3600000 * 5).toISOString() },
-      { id: 'RSL-83921', clientName: 'Ana Perez', address: 'Santiago de los Caballeros', deliveryType: 'delivery_country', items: [{ id: 2, name: 'Perfume Capilar', price: 1200, qty: 1, subtotal: 1200 }, { id: 1, name: 'Sérum Capilar', price: 1000, qty: 1, subtotal: 1000 }], total: 2200, status: 'Completado', timestamp: new Date(Date.now() - 3600000 * 24).toISOString() }
+      { id: 'RSL-83921', clientName: 'Ana Perez', address: 'Santiago de los Caballeros', deliveryType: 'delivery_country', items: [{ id: 2, name: 'Perfume Capilar', price: 1200, qty: 1, subtotal: 1200 }, { id: 1, name: 'Sérum Capilar (Hair Serum)', price: 1000, qty: 1, subtotal: 1000 }], total: 2200, status: 'Completado', timestamp: new Date(Date.now() - 3600000 * 24).toISOString() }
     ];
     localStorage.setItem('roseline_orders', JSON.stringify(orders));
   }
