@@ -84,12 +84,59 @@ function initAuth() {
   });
 }
 
+// Image compression helper (max width/height 400px, jpeg format, 0.7 quality)
+function initImageUploader() {
+  const imgFileInput = document.getElementById('prod-img-file');
+  if (!imgFileInput) return;
+
+  imgFileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(event) {
+      const img = new Image();
+      img.onload = function() {
+        const canvas = document.createElement('canvas');
+        const max_size = 400;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > max_size) {
+            height *= max_size / width;
+            width = max_size;
+          }
+        } else {
+          if (height > max_size) {
+            width *= max_size / height;
+            height = max_size;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+        document.getElementById('prod-img').value = dataUrl;
+        document.getElementById('prod-img-preview').src = dataUrl;
+      };
+      img.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   initAuth();
   initTabs();
   loadData();
   initSpotlight();
   initSettingsForm();
+  initImageUploader();
   renderDashboard();
 });
 
@@ -445,6 +492,8 @@ window.openAddProductModal = function() {
   document.getElementById('modal-title').textContent = 'Añadir Producto';
   document.getElementById('product-form').reset();
   document.getElementById('prod-id').value = '';
+  document.getElementById('prod-img').value = '';
+  document.getElementById('prod-img-preview').src = 'images/placeholder.png';
   document.getElementById('product-modal').style.display = 'flex';
 };
 
@@ -459,6 +508,7 @@ window.openEditProductModal = function(productId) {
   document.getElementById('prod-subtitle').value = prod.subtitle || '';
   document.getElementById('prod-desc').value = prod.desc;
   document.getElementById('prod-img').value = prod.img || '';
+  document.getElementById('prod-img-preview').src = prod.img || 'images/placeholder.png';
   document.getElementById('prod-badge').value = prod.badge || '';
 
   document.getElementById('product-modal').style.display = 'flex';

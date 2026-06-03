@@ -203,8 +203,13 @@
               </div>
               <div class="form-row">
                 <div class="form-group">
-                  <label for="prod-img">Imagen (Ruta local o URL)</label>
-                  <input type="text" id="prod-img" placeholder="images/filename.png">
+                  <label for="prod-img-file">Foto del Producto (Subir o Capturar)</label>
+                  <div class="custom-file-upload" style="display: flex; align-items: center; gap: 12px; margin-top: 8px;">
+                    <input type="file" id="prod-img-file" accept="image/*" style="display: none;">
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('prod-img-file').click()" style="padding: 10px 16px;">Seleccionar Imagen</button>
+                    <input type="hidden" id="prod-img">
+                    <img id="prod-img-preview" src="images/placeholder.png" style="width: 50px; height: 50px; object-fit: contain; border-radius: var(--radius-sm); border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2);">
+                  </div>
                 </div>
                 <div class="form-group">
                   <label for="prod-badge">Etiqueta destacada (Opcional)</label>
