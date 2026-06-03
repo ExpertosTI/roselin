@@ -52,6 +52,22 @@ function escapeHTML(str) {
   );
 }
 
+function initSecretAdminAccess() {
+  const logo = document.getElementById('logo-link');
+  if (!logo) return;
+
+  logo.addEventListener('dblclick', (e) => {
+    e.preventDefault();
+    const pin = prompt('Introduce el PIN de administración:');
+    if (pin === '7479') {
+      sessionStorage.setItem('roseline_admin_auth', 'true');
+      window.location.href = 'admin.html';
+    } else if (pin !== null) {
+      alert('PIN incorrecto.');
+    }
+  });
+}
+
 // Initialize application on DOM ready
 document.addEventListener('DOMContentLoaded', () => {
   initIntro();
@@ -61,6 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initMobileMenu();
   loadCart();
   initCheckout();
+  initSecretAdminAccess();
 });
 
 /* ─────────────────────────────────────────────────────────────
@@ -315,7 +332,7 @@ function updateCartUI() {
   }
 
   summarySection.style.display = 'block';
-  let totalPrice = 0;
+  let subtotalPrice = 0;
   let html = '';
 
   cart.forEach(item => {
@@ -323,7 +340,7 @@ function updateCartUI() {
     if (!details) return;
 
     const subtotal = details.price * item.qty;
-    totalPrice += subtotal;
+    subtotalPrice += subtotal;
 
     html += `
       <div class="cart-item">
@@ -348,6 +365,22 @@ function updateCartUI() {
   });
 
   itemsContainer.innerHTML = html;
+
+  const deliverySelect = document.getElementById('checkout-delivery');
+  let shippingCost = 0;
+  if (deliverySelect) {
+    const val = deliverySelect.value;
+    if (val === 'delivery_sd' || val === 'delivery_country') {
+      shippingCost = 300;
+    }
+  }
+
+  const totalPrice = subtotalPrice + shippingCost;
+  const subtotalLabel = document.getElementById('cart-subtotal-label');
+  const shippingLabel = document.getElementById('cart-shipping-label');
+
+  if (subtotalLabel) subtotalLabel.textContent = `RD$ ${subtotalPrice.toLocaleString()}`;
+  if (shippingLabel) shippingLabel.textContent = shippingCost > 0 ? `RD$ ${shippingCost.toLocaleString()}` : 'Gratis';
   totalLabel.textContent = `RD$ ${totalPrice.toLocaleString()}`;
 }
 
@@ -356,6 +389,14 @@ function updateCartUI() {
 ───────────────────────────────────────────────────────────── */
 function initCheckout() {
   const form = document.getElementById('checkout-form');
+  const deliverySelect = document.getElementById('checkout-delivery');
+  
+  if (deliverySelect) {
+    deliverySelect.addEventListener('change', () => {
+      renderCart();
+    });
+  }
+
   if (!form) return;
 
   // Read vendor phone number from settings in localStorage, or fallback
@@ -375,15 +416,14 @@ function initCheckout() {
 
     const name = escapeHTML(document.getElementById('checkout-name').value.trim());
     const address = escapeHTML(document.getElementById('checkout-address').value.trim());
-    const deliverySelect = document.getElementById('checkout-delivery');
-    const deliveryText = deliverySelect.options[deliverySelect.selectedIndex].text;
-    const deliveryVal = deliverySelect.value;
+    const deliveryText = deliverySelect ? deliverySelect.options[deliverySelect.selectedIndex].text : '';
+    const deliveryVal = deliverySelect ? deliverySelect.value : 'pickup';
 
     if (cart.length === 0) return;
 
     // Fetch order details
     const orderItems = [];
-    let total = 0;
+    let subtotal = 0;
     
     let message = `*NUEVO PEDIDO - THE ROSELINE EFFECT*\n`;
     message += `==============================\n\n`;
@@ -396,19 +436,28 @@ function initCheckout() {
       const details = products[item.id];
       if (!details) return;
       
-      const subtotal = details.price * item.qty;
-      total += subtotal;
+      const itemSubtotal = details.price * item.qty;
+      subtotal += itemSubtotal;
       
       orderItems.push({
         id: item.id,
         name: details.name,
         price: details.price,
         qty: item.qty,
-        subtotal: subtotal
+        subtotal: itemSubtotal
       });
 
-      message += `- ${item.qty}x ${details.name} (RD$ ${Number(details.price).toLocaleString()} c/u) -> *RD$ ${subtotal.toLocaleString()}*\n`;
+      message += `- ${item.qty}x ${details.name} (RD$ ${Number(details.price).toLocaleString()} c/u) -> *RD$ ${itemSubtotal.toLocaleString()}*\n`;
     });
+
+    const shippingCost = (deliveryVal === 'delivery_sd' || deliveryVal === 'delivery_country') ? 300 : 0;
+    const total = subtotal + shippingCost;
+
+    if (shippingCost > 0) {
+      message += `\n📦 *Costo de Envío:* RD$ ${shippingCost.toLocaleString()}\n`;
+    } else {
+      message += `\n📦 *Costo de Envío:* Gratis (Retiro)\n`;
+    }
 
     message += `\n==============================\n`;
     message += `💰 *TOTAL A PAGAR: RD$ ${total.toLocaleString()}*\n\n`;
